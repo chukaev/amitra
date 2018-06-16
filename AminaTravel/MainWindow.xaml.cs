@@ -1,51 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using MahApps.Metro.Controls;
+using Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AminaTravel
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class MainWindow
     {
-        public bool FirstClick { get; set; }
         public MainWindow()
         {
             InitializeComponent();
         }
-
+        private static readonly HttpClient client = new HttpClient();
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            //TourAdressTextBox.Text
-            FirstClick = !FirstClick;
+            ParsingSwitch();
+            Ring.IsActive = true;
+            FindingLabel.Visibility = Visibility.Visible;
+            ResultsTab.Visibility = Visibility.Hidden;
+            ComparisonGrid.Visibility = Visibility.Hidden;
+        }
 
-            if (FirstClick)
+        private void ParsingSwitch()
+        {
+            var host = new Uri(TourAdressTextBox.Text).Host;
+            switch (host)
             {
-                Ring.IsActive = true;
-                FindingLabel.Visibility = Visibility.Visible;
-                ResultsTab.Visibility = Visibility.Hidden;
-                ComparisonGrid.Visibility = Visibility.Hidden;
+                case "tours.tutu.ru":
+
+                    var match = new Regex("order/(.*)/").Match(TourAdressTextBox.Text);
+                    if (match.Success)
+                    
+                        GetDataFromTutuRu(match.Groups[1].Value);
+                    
+                    break;
+                default:
+                    Ring.IsActive = false;
+                    FindingLabel.Visibility = Visibility.Hidden;
+                    ResultsTab.Visibility = Visibility.Visible;
+                    ComparisonGrid.Visibility = Visibility.Visible;
+                    break;
             }
-            else
+        }
+
+        private async void GetDataFromTutuRu(string order)
+        {
+            var values = new Dictionary<string, string>
             {
-                Ring.IsActive = false;
-                FindingLabel.Visibility = Visibility.Hidden;
-                ResultsTab.Visibility = Visibility.Visible;
-                ComparisonGrid.Visibility = Visibility.Visible;
-            }
+                { "order", order },
+                { "force", "false" }
+            };
+
+            var content = new FormUrlEncodedContent(values);
+
+            var response = await client.PostAsync("https://tours.tutu.ru/api/get_detailed_order/", content);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var json = (JObject) JsonConvert.DeserializeObject(responseString);
+
+            var tour = new Tour
+            {
+                Price = json["orderPrice"]["price"]["priceRub"].Value<int>(),
+                Hotel = new Hotel(json["orderAccommodation"]["residences"][0]["hotel"]),
+                Transfer = new Transfer(json["orderTransports"])
+            };
         }
     }
 }
