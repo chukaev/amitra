@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 using Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -129,8 +132,18 @@ namespace AminaTravel
                     Room = Tour.Hotel.Room,
                     Place = Tour.Hotel.Place,
                     DateRange = Tour.Hotel.DateRange,
+                    Meal = "Без питания",
+                    Price = 5000
+                },
+                new Hotel
+                {
+                    City = Tour.Hotel.City,
+                    Name = Tour.Hotel.Name,
+                    Room = Tour.Hotel.Room,
+                    Place = Tour.Hotel.Place,
+                    DateRange = Tour.Hotel.DateRange,
                     Meal = "Завтрак",
-                    Price = 8000
+                    Price = 6000
                 },
                 new Hotel
                 {
@@ -140,7 +153,7 @@ namespace AminaTravel
                     Place = Tour.Hotel.Place,
                     DateRange = Tour.Hotel.DateRange,
                     Meal = "Завтрак и ужин",
-                    Price = 10000
+                    Price = 80000
                 },
                 new Hotel
                 {
@@ -150,16 +163,26 @@ namespace AminaTravel
                     Place = Tour.Hotel.Place,
                     DateRange = Tour.Hotel.DateRange,
                     Meal = "Ужин",
-                    Price = 9000
+                    Price = 7000
                 }
             };
 
             TransportOptionsListView.ItemsSource = transferOptions;
 
+            PlacesOptionsListView.ItemsSource = placesOptions;
+
             Ring.IsActive = false;
             FindingLabel.Visibility = Visibility.Hidden;
             ResultsTab.Visibility = Visibility.Visible;
             ComparisonGrid.Visibility = Visibility.Visible;
+        }
+
+        public int Price => (((Transfer) TransportOptionsListView.SelectedItem)?.Price??0) +
+                            (((Hotel) PlacesOptionsListView.SelectedItem)?.Price??0);
+
+        private void ListViewItem_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            NewTourPrice.Content = Price;
         }
     }
 }
