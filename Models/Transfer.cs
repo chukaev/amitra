@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 
 namespace Models
 {
     public class Transfer
     {
+        public Transfer()
+        {
+        }
+
         public Transfer(JToken jToken)
         {
             foreach (var outwardToken in jToken["transportationsBlocks"]["outward"])
@@ -59,8 +64,12 @@ namespace Models
             }
         }
 
+        public int Price { get; set; }
+
         public List<TransportationsBlock> Outward { get; set; } = new List<TransportationsBlock>();
 
         public List<TransportationsBlock> Return { get; set; }=new List<TransportationsBlock>();
+
+        public List<TransportationsBlock> AllTransportationsBlocks => Outward.Concat(Return).ToList();
     }
 }

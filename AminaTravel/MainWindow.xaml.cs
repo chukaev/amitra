@@ -80,7 +80,7 @@ namespace AminaTravel
             var json = (JObject) JsonConvert.DeserializeObject(responseString);
             
             Tour = new Tour
-            {
+                {
                 TourName = json["orderAccommodation"]["tourName"].Value<string>(),
                 Price = json["orderPrice"]["price"]["priceRub"].Value<int>(),
                 Hotel = new Hotel(json["orderAccommodation"]["mainResidence"]),
@@ -92,15 +92,44 @@ namespace AminaTravel
             SourceTourHotelDescription.Text = Tour.Hotel.Info;
             SourceTourName.Content = Tour.TourName;
             SourceTourPrice.Content = Tour.Price + " ₽";
-            var tourTravelPoints = Tour.Transfer.Outward.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x=> new {Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList();
-          
-            tourTravelPoints.AddRange(Tour.Transfer.Outward.Where(x=>x.Arrival != null && x.ArrivalDateTime != null).Select(x => new {Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
-            tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x => new { Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList());
-            tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Arrival != null && x.ArrivalDateTime != null).Select(x => new { Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
+            //var tourTravelPoints = Tour.Transfer.Outward.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x=> new {Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList();
 
-            var tourTravelPointsString = tourTravelPoints.OrderBy(x => x.Time).Select(x=>x.Place + " " + x.Time.ToString("dd MMM HH mm"));
+            //tourTravelPoints.AddRange(Tour.Transfer.Outward.Where(x=>x.Arrival != null && x.ArrivalDateTime != null).Select(x => new {Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
+            //tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x => new { Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList());
+            //tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Arrival != null && x.ArrivalDateTime != null).Select(x => new { Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
+
+            //var tourTravelPointsString = tourTravelPoints.OrderBy(x => x.Time).Select(x=>x.Place + " " + x.Time.ToString("dd MMM HH mm"));
             //Tour.Transfer 
-            SourceTourTravelPoints.ItemsSource = tourTravelPointsString;
+            //SourceTourTravelPoints.ItemsSource = tourTravelPointsString;
+
+            SourceTourTravelPoints.ItemsSource = Tour.Transfer.AllTransportationsBlocks;
+            var transferOptions = new List<Transfer>();
+
+            for (int i = 0; i < 12; i++)
+            {
+                transferOptions.Add(new Transfer
+                {
+                    Outward = new List<TransportationsBlock>
+                    {
+                        new TransportationsBlock
+                        {
+                            Departure = Tour.Transfer.Outward[0].Departure,
+                            DepartureDateTime = Tour.Transfer.Outward[0].DepartureDateTime?.AddHours(-i),
+                        }
+                    },
+                    Return = new List<TransportationsBlock>
+                    {
+                        new TransportationsBlock
+                        {
+                            Departure = Tour.Transfer.Return[0].Departure,
+                            DepartureDateTime = Tour.Transfer.Return[0].DepartureDateTime?.AddHours(-i),
+                        }
+                    },
+                    Price = 12042 + i * 83
+                });
+            }
+
+            TransportOptionsListView.ItemsSource = transferOptions;
 
             Ring.IsActive = false;
             FindingLabel.Visibility = Visibility.Hidden;
