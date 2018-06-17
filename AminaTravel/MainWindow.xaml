@@ -6,7 +6,7 @@
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:models="clr-namespace:Models;assembly=Models"
                       mc:Ignorable="d"
-        Title="Планирование туристического отдыха" MinHeight="586" MinWidth="822" Width="822" Height="586">
+        Title="Планирование туристического отдыха" MinHeight="600" MinWidth="950" Width="956.25" Height="600">
     <Grid >
         <Grid Height="65" Margin="10,10,10,0" VerticalAlignment="Top">
             <Label Content="адрес тура в интернете" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -21,7 +21,7 @@
         <Grid Margin="0,80,0,-0.5">
             <controls:ProgressRing x:Name="Ring" Width="100" Height="100" IsActive="False"  Foreground="#FF6D31F5" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <Label Name="FindingLabel" Content="we finding options to rebuild tour" HorizontalAlignment="Center" Visibility="Hidden"/>
-            <TabControl Name="ResultsTab" Margin="10,10,300,10" Visibility="Visible">
+            <TabControl Name="ResultsTab" Margin="10,10,310,10" Visibility="Visible">
                 <TabItem Header="Трансфер">
                     <ListView 
                         Name="TransportOptionsListView" Margin="0,0,0,0">
@@ -75,8 +75,8 @@
                     </ListView>
                 </TabItem>
             </TabControl>
-            <Grid Name="ComparisonGrid" Margin="0,11,10,0" HorizontalAlignment="Right" Width="285" Visibility="Visible">
-                <Grid HorizontalAlignment="Left" Width="285" Height="230" VerticalAlignment="Top">
+            <Grid Name="ComparisonGrid" Margin="0,11,10,0" HorizontalAlignment="Right" Width="300" Visibility="Visible">
+                <Grid Height="230" VerticalAlignment="Top" HorizontalAlignment="Stretch">
                     <Label Name ="SourceTourName"
                            Content="Выбранный тур" 
                            HorizontalAlignment="Left" VerticalAlignment="Top" 
@@ -96,7 +96,7 @@
                                                 DisplayMemberBinding="{Binding DepartureDateTime, StringFormat='dd MMM HH:mm'}" />
                             </GridView>
                         </ListView.View>
-                        
+
                     </ListView>
                     <Label Name ="SourceTourCity" 
                            Content="Город"
@@ -111,7 +111,7 @@
                              Text="колво звезд что включено на сколько гостей" 
                              Height="60" Margin="10,162,0,0" TextWrapping="Wrap" Width="265" />
                 </Grid>
-                <Grid HorizontalAlignment="Left" Width="285" Height="230" VerticalAlignment="Top" Margin="0,230,0,-3">
+                <Grid HorizontalAlignment="Stretch" Width="285" Height="230" VerticalAlignment="Top" Margin="0,230,0,0">
                     <Label Name ="NewTourName"
                            Content="Выбранный тур" 
                            HorizontalAlignment="Left" VerticalAlignment="Top" 

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using Models;
 using Newtonsoft.Json;
@@ -153,7 +150,7 @@ namespace AminaTravel
                     Place = Tour.Hotel.Place,
                     DateRange = Tour.Hotel.DateRange,
                     Meal = "Завтрак и ужин",
-                    Price = 80000
+                    Price = 8000
                 },
                 new Hotel
                 {
