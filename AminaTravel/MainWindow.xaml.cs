@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -18,36 +19,48 @@ namespace AminaTravel
         {
             InitializeComponent();
         }
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient Client = new HttpClient();
+
+        public Tour Tour { get; private set; } = new Tour { TourName = "Жопа" };
+
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            ParsingSwitch();
             Ring.IsActive = true;
             FindingLabel.Visibility = Visibility.Visible;
             ResultsTab.Visibility = Visibility.Hidden;
             ComparisonGrid.Visibility = Visibility.Hidden;
+            ParsingSwitch();
         }
 
         private void ParsingSwitch()
         {
-            var host = new Uri(TourAdressTextBox.Text).Host;
-            switch (host)
+            try
             {
-                case "tours.tutu.ru":
+                var host = new Uri(TourAdressTextBox.Text).Host;
+                switch (host)
+                {
+                    case "tours.tutu.ru":
 
-                    var match = new Regex("order/(.*)/").Match(TourAdressTextBox.Text);
-                    if (match.Success)
-                    
-                        GetDataFromTutuRu(match.Groups[1].Value);
-                    
-                    break;
-                default:
-                    Ring.IsActive = false;
-                    FindingLabel.Visibility = Visibility.Hidden;
-                    ResultsTab.Visibility = Visibility.Visible;
-                    ComparisonGrid.Visibility = Visibility.Visible;
-                    break;
+                        var match = new Regex("order/(.*)/").Match(TourAdressTextBox.Text);
+                        if (match.Success)
+
+                            GetDataFromTutuRu(match.Groups[1].Value);
+
+                        break;
+                    default:
+                        Ring.IsActive = false;
+                        FindingLabel.Visibility = Visibility.Hidden;
+                        ResultsTab.Visibility = Visibility.Visible;
+                        ComparisonGrid.Visibility = Visibility.Visible;
+                        break;
+                }
             }
+            catch (Exception)
+            {
+                Ring.IsActive = false;
+                FindingLabel.Visibility = Visibility.Hidden;
+            }
+            
         }
 
         private async void GetDataFromTutuRu(string order)
@@ -60,18 +73,39 @@ namespace AminaTravel
 
             var content = new FormUrlEncodedContent(values);
 
-            var response = await client.PostAsync("https://tours.tutu.ru/api/get_detailed_order/", content);
+            var response = await Client.PostAsync("https://tours.tutu.ru/api/get_detailed_order/", content);
 
             var responseString = await response.Content.ReadAsStringAsync();
 
             var json = (JObject) JsonConvert.DeserializeObject(responseString);
-
-            var tour = new Tour
+            
+            Tour = new Tour
             {
+                TourName = json["orderAccommodation"]["tourName"].Value<string>(),
                 Price = json["orderPrice"]["price"]["priceRub"].Value<int>(),
-                Hotel = new Hotel(json["orderAccommodation"]["residences"][0]["hotel"]),
+                Hotel = new Hotel(json["orderAccommodation"]["mainResidence"]),
                 Transfer = new Transfer(json["orderTransports"])
             };
+
+            SourceTourCity.Content = Tour.Hotel.City;
+            SourceTourHotel.Content = Tour.Hotel.Name;
+            SourceTourHotelDescription.Text = Tour.Hotel.Info;
+            SourceTourName.Content = Tour.TourName;
+            SourceTourPrice.Content = Tour.Price + " ₽";
+            var tourTravelPoints = Tour.Transfer.Outward.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x=> new {Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList();
+          
+            tourTravelPoints.AddRange(Tour.Transfer.Outward.Where(x=>x.Arrival != null && x.ArrivalDateTime != null).Select(x => new {Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
+            tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x => new { Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList());
+            tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Arrival != null && x.ArrivalDateTime != null).Select(x => new { Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
+
+            var tourTravelPointsString = tourTravelPoints.OrderBy(x => x.Time).Select(x=>x.Place + " " + x.Time.ToString("dd MMM HH mm"));
+            //Tour.Transfer 
+            SourceTourTravelPoints.ItemsSource = tourTravelPointsString;
+
+            Ring.IsActive = false;
+            FindingLabel.Visibility = Visibility.Hidden;
+            ResultsTab.Visibility = Visibility.Visible;
+            ComparisonGrid.Visibility = Visibility.Visible;
         }
     }
 }

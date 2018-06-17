@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using Newtonsoft.Json.Linq;
 
 namespace Models
@@ -7,15 +8,15 @@ namespace Models
     {
         public Hotel(JToken jToken)
         {
-            Name = jToken["title"].Value<String>();
-            City = jToken["place"].Value<String>();
-            //Info = jToken[""]
+            Name = HttpUtility.HtmlDecode(jToken["hotel"]["title"].Value<string>());
+            City = HttpUtility.HtmlDecode(jToken["hotel"]["place"].Value<string>());
+            Info = HttpUtility.HtmlDecode($"{jToken["room"]["description"].Value<string>()} {jToken["place"]["description"]} {jToken["dateRange"]}. {jToken["meal"]}");
         }
 
-        public String Name { get; set; }
+        public string Name { get; set; }
 
-        public String City { get; set; }
+        public string City { get; set; }
 
-        public String Info { get; set; }
+        public string Info { get; set; }
     }
 }

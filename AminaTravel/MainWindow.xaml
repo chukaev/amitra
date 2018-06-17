@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
-        mc:Ignorable="d"
-        Title="Планирование туристического отдыха" MinHeight="460" MinWidth="813" Width="820.051">
-    <Grid>
+                      xmlns:aminaTravel="clr-namespace:AminaTravel"
+                      mc:Ignorable="d"
+        Title="Планирование туристического отдыха" MinHeight="586" MinWidth="822" Width="822" Height="586">
+    <Grid d:DataContext="{d:DesignData aminaTravel:MainWindow}">
         <Grid Height="65" Margin="10,10,10,0" VerticalAlignment="Top">
             <Label Content="адрес тура в интернете" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox Name="TourAdressTextBox" VerticalAlignment="Center" MinWidth="650" Margin="0,24,100,23" TextWrapping="Wrap" Text="" />
@@ -20,7 +21,7 @@
         <Grid Margin="0,80,0,-0.5">
             <controls:ProgressRing x:Name="Ring" Width="100" Height="100" IsActive="False"  Foreground="#FF6D31F5" HorizontalAlignment="Center" VerticalAlignment="Center" />
             <Label Name="FindingLabel" Content="we finding options to rebuild tour" HorizontalAlignment="Center" Visibility="Hidden"/>
-            <TabControl Name="ResultsTab" Margin="10,10,250,10" Visibility="Visible">
+            <TabControl Name="ResultsTab" Margin="10,10,300,10" Visibility="Visible">
                 <TabItem Header="Трансфер">
                     <Grid Background="#FFE5E5E5"/>
                 </TabItem>
@@ -28,22 +29,46 @@
                     <Grid Background="#FFE5E5E5"/>
                 </TabItem>
             </TabControl>
-            <Grid Name="ComparisonGrid" Margin="0,11,10,0" HorizontalAlignment="Right" Width="235" Visibility="Visible">
-                <Grid HorizontalAlignment="Left" Width="235" Height="200" VerticalAlignment="Top">
-                    <Label Content="Выбранный тур" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.533"/>
-                    <Label Content="Сумма" HorizontalAlignment="Left" FontWeight="Bold" Margin="114,10,0,0" VerticalAlignment="Top"/>
-                    <ListBox Name="TravelPoints" HorizontalAlignment="Left" Height="60" Margin="10,41,0,0" VerticalAlignment="Top" Width="215"/>
-                    <Label Content="Город" Name="City" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Отель" Name="Hotel" HorizontalAlignment="Left" Margin="182,106,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.106,0.637"/>
-                    <TextBox HorizontalAlignment="Left" Height="58" Margin="10,132,0,0" TextWrapping="Wrap" Text="колво звезд что включено на сколько гостей" VerticalAlignment="Top" Width="225" />
+            <Grid Name="ComparisonGrid" Margin="0,11,10,0" HorizontalAlignment="Right" Width="285" Visibility="Visible">
+                <Grid HorizontalAlignment="Left" Width="285" Height="230" VerticalAlignment="Top">
+                    <Label Name ="SourceTourName"
+                           Content="Выбранный тур" 
+                           HorizontalAlignment="Left" VerticalAlignment="Top" 
+                           RenderTransformOrigin="0.485,0.533"/>
+                    <Label Name="SourceTourPrice" Content="Сумма" HorizontalAlignment="Left" FontWeight="Bold" Margin="0,20,0,0" VerticalAlignment="Top"/>
+                    <ListBox Name="SourceTourTravelPoints" HorizontalAlignment="Left" VerticalAlignment="Top" 
+                             Height="60" Margin="11,46,0,0" Width="265"/>
+                    <Label Name ="SourceTourCity" 
+                           Content="Город"
+                           HorizontalAlignment="Left" VerticalAlignment="Top"
+                           Margin="10,106,0,0" />
+                    <Label Name="SourceTourHotel" 
+                           Content="Отель" 
+                           HorizontalAlignment="Left" VerticalAlignment="Top" 
+                           Margin="11,131,0,0" RenderTransformOrigin="3.106,0.637"/>
+                    <TextBox Name="SourceTourHotelDescription" 
+                             HorizontalAlignment="Left" VerticalAlignment="Top" 
+                             Text="колво звезд что включено на сколько гостей" 
+                             Height="60" Margin="10,162,0,0" TextWrapping="Wrap" Width="265" />
                 </Grid>
-                <Grid HorizontalAlignment="Left" Width="235" Height="200" Margin="0,200,0,0">
-                    <Label Content="Собранный тур" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.485,0.533"/>
-                    <Label Content="Сумма" HorizontalAlignment="Left" FontWeight="Bold" Margin="114,10,0,0" VerticalAlignment="Top"/>
-                    <ListBox Name="TravelPointsChecked" HorizontalAlignment="Left" Height="60" Margin="10,41,0,0" VerticalAlignment="Top" Width="215"/>
-                    <Label Content="Город" Name="CityChecked" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Отель" Name="HotelChecked" HorizontalAlignment="Left" Margin="182,106,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.106,0.637"/>
-                    <TextBox HorizontalAlignment="Left" Height="58" Margin="10,132,0,0" TextWrapping="Wrap" Text="колво звезд что включено на сколько гостей" VerticalAlignment="Top" Width="225" />
+                <Grid HorizontalAlignment="Left" Width="285" Height="230" VerticalAlignment="Top" Margin="0,230,0,-3">
+                    <Label Name ="NewTourName"
+                           Content="Выбранный тур" 
+                           HorizontalAlignment="Left" VerticalAlignment="Top" 
+                           RenderTransformOrigin="0.485,0.533"/>
+                    <Label Name="NewTourPrice" 
+                           Content="Сумма" 
+                           HorizontalAlignment="Left" VerticalAlignment="Top"
+                           FontWeight="Bold" Margin="0,20,0,0" />
+                    <ListBox Name="NewTourTravelPoints" 
+                             HorizontalAlignment="Left" VerticalAlignment="Top" 
+                             Height="60" Margin="11,46,0,0" Width="265"/>
+                    <Label Name ="NewTourCity" Content="Город" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top"/>
+                    <Label Name="NewTourHotel" Content="Отель" HorizontalAlignment="Left" Margin="11,131,0,0" VerticalAlignment="Top" RenderTransformOrigin="3.106,0.637"/>
+                    <TextBox Name="NewTourHotelDescription" 
+                             HorizontalAlignment="Left" VerticalAlignment="Top" 
+                             Text="колво звезд что включено на сколько гостей" 
+                             Height="60" Margin="10,162,0,0" TextWrapping="Wrap" Width="265" />
                 </Grid>
             </Grid>
         </Grid>
