@@ -19,9 +19,10 @@ namespace AminaTravel
         {
             InitializeComponent();
         }
+
         private static readonly HttpClient Client = new HttpClient();
 
-        public Tour Tour { get; private set; } = new Tour { TourName = "Жопа" };
+        public Tour Tour { get; private set; } = new Tour {TourName = "Жопа"};
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
@@ -60,15 +61,14 @@ namespace AminaTravel
                 Ring.IsActive = false;
                 FindingLabel.Visibility = Visibility.Hidden;
             }
-            
         }
 
         private async void GetDataFromTutuRu(string order)
         {
             var values = new Dictionary<string, string>
             {
-                { "order", order },
-                { "force", "false" }
+                {"order", order},
+                {"force", "false"}
             };
 
             var content = new FormUrlEncodedContent(values);
@@ -78,9 +78,9 @@ namespace AminaTravel
             var responseString = await response.Content.ReadAsStringAsync();
 
             var json = (JObject) JsonConvert.DeserializeObject(responseString);
-            
+
             Tour = new Tour
-                {
+            {
                 TourName = json["orderAccommodation"]["tourName"].Value<string>(),
                 Price = json["orderPrice"]["price"]["priceRub"].Value<int>(),
                 Hotel = new Hotel(json["orderAccommodation"]["mainResidence"]),
@@ -92,20 +92,11 @@ namespace AminaTravel
             SourceTourHotelDescription.Text = Tour.Hotel.Info;
             SourceTourName.Content = Tour.TourName;
             SourceTourPrice.Content = Tour.Price + " ₽";
-            //var tourTravelPoints = Tour.Transfer.Outward.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x=> new {Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList();
-
-            //tourTravelPoints.AddRange(Tour.Transfer.Outward.Where(x=>x.Arrival != null && x.ArrivalDateTime != null).Select(x => new {Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
-            //tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Departure != null && x.DepartureDateTime != null).Select(x => new { Place = x.Departure, Time = x.DepartureDateTime.Value}).ToList());
-            //tourTravelPoints.AddRange(Tour.Transfer.Return.Where(x => x.Arrival != null && x.ArrivalDateTime != null).Select(x => new { Place = x.Arrival, Time = x.ArrivalDateTime.Value}).ToList());
-
-            //var tourTravelPointsString = tourTravelPoints.OrderBy(x => x.Time).Select(x=>x.Place + " " + x.Time.ToString("dd MMM HH mm"));
-            //Tour.Transfer 
-            //SourceTourTravelPoints.ItemsSource = tourTravelPointsString;
 
             SourceTourTravelPoints.ItemsSource = Tour.Transfer.AllTransportationsBlocks;
             var transferOptions = new List<Transfer>();
 
-            for (int i = 0; i < 12; i++)
+            for (var i = 0; i < 12; i++)
             {
                 transferOptions.Add(new Transfer
                 {
@@ -128,6 +119,40 @@ namespace AminaTravel
                     Price = 12042 + i * 83
                 });
             }
+
+            var placesOptions = new List<Hotel>
+            {
+                new Hotel
+                {
+                    City = Tour.Hotel.City,
+                    Name = Tour.Hotel.Name,
+                    Room = Tour.Hotel.Room,
+                    Place = Tour.Hotel.Place,
+                    DateRange = Tour.Hotel.DateRange,
+                    Meal = "Завтрак",
+                    Price = 8000
+                },
+                new Hotel
+                {
+                    City = Tour.Hotel.City,
+                    Name = Tour.Hotel.Name,
+                    Room = Tour.Hotel.Room,
+                    Place = Tour.Hotel.Place,
+                    DateRange = Tour.Hotel.DateRange,
+                    Meal = "Завтрак и ужин",
+                    Price = 10000
+                },
+                new Hotel
+                {
+                    City = Tour.Hotel.City,
+                    Name = Tour.Hotel.Name,
+                    Room = Tour.Hotel.Room,
+                    Place = Tour.Hotel.Place,
+                    DateRange = Tour.Hotel.DateRange,
+                    Meal = "Ужин",
+                    Price = 9000
+                }
+            };
 
             TransportOptionsListView.ItemsSource = transferOptions;
 

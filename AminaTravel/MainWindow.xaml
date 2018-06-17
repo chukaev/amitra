@@ -36,7 +36,7 @@
                                 <GridViewColumn 
                                                 DisplayMemberBinding="{Binding Path=Return[0].DepartureDateTime, StringFormat='dd MMM HH:mm'}" />
                                 <GridViewColumn 
-                                                DisplayMemberBinding="{Binding Path=Price}" />
+                                                DisplayMemberBinding="{Binding Path=Price, StringFormat='{} ₽'}" />
 
                             </GridView>
                         </ListView.View>
